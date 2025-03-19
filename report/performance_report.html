@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Test Overview</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .header {
+            background: #0073e6;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #333;
+            border-bottom: 2px solid #0073e6;
+            padding-bottom: 5px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 5px 0;
+        }
+        canvas {
+            display: block;
+            margin: 20px auto;
+            width: 80% !important;
+            height: auto !important;
+        }
+    </style>
+</head>
+<body>
+<div class="header">Performance Test Overview</div>
+<div class="container">
+    <h1>Overview</h1>
+    <p>This test intends to measure the performance between the NodeJS driver released by Cubrid and Node-ODBC.</p>
+
+    <h2>Test Environment</h2>
+    <ul>
+        <li><strong>Window:</strong> 10</li>
+        <li><strong>Node:</strong> 20.18.2</li>
+        <li><strong>Cubrid:</strong> 11.3 (11.3.2.1187-3c096d3)</li>
+        <li><strong>node-cubrid:</strong> 11.0</li>
+        <li><strong>odbc:</strong> 2.4.9</li>
+    </ul>
+
+    <h2>Data Preparation</h2>
+    <ul>
+        <li><strong>Table:</strong></li>
+        <ul>
+            <li><strong>Columns:</strong> 3</li>
+            <li><strong>Data Type:</strong> INTEGER, VARCHAR(100), INTEGER</li>
+            <li><strong>Sampling:</strong> 50000</li>
+        </ul>
+    </ul>
+
+
+    <!-- Graph Section -->
+    <h2>Performance Comparison</h2>
+    <div>
+        <canvas id="auto"></canvas>
+    </div>
+
+    <h2>Sampling Operation</h2>
+
+    <p>This method aims to reduce bias in the results by minimizing the impact of server load, which may fluctuate due to other applications utilizing system resources. Instead of running a single test, the process is repeated multiple times for more reliable sampling.</p>
+
+    <ul>
+        <li><strong>Samples per execution: 1,000</strong></li>
+        <li><strong>Total executions: 20</strong></li>
+    </ul>
+
+    <p><i>The vertical axis represents the duration in milliseconds (ms).</i></p>
+    <p><i>The horizontal axis represents the number of executions.</i></p>
+
+    <div>
+        <canvas id="insert"></canvas>
+    </div>
+    <div>
+        <canvas id="select"></canvas>
+    </div>
+    <div>
+        <canvas id="update"></canvas>
+    </div>
+    <div>
+        <canvas id="delete"></canvas>
+    </div>
+
+    <h2>Conclusion of Performance Results</h2>
+
+    <h3>1. Insert Performance</h3>
+    <p>
+        CUBRID insert times range from 774ms to 907ms, showing stable performance.<br>
+        ODBC insert times are significantly higher, ranging from 1041ms to 1347ms.<br>
+        CUBRID outperforms ODBC in insert operations, making it the more efficient choice for handling large data insertions.
+    </p>
+
+    <h3>2. Select Performance</h3>
+    <p>
+        CUBRID select times are consistently low (ranging from 1ms to 4ms), ensuring fast read operations.<br>
+        ODBC select times are higher and more variable (ranging from 6ms to 10ms).<br>
+        CUBRID handles read operations more efficiently.
+    </p>
+
+    <h3>3. Update Performance</h3>
+    <p>
+        CUBRID update times range from 721ms to 858ms, maintaining relatively stable execution times.<br>
+        ODBC update times are significantly higher (ranging from 923ms to 1227ms).<br>
+        CUBRID is faster for updates, reducing execution time for frequent modifications.
+    </p>
+
+    <h3>4. Delete Performance</h3>
+    <p>
+        CUBRID delete times range from 718ms to 836ms, demonstrating stable and lower execution times.<br>
+        ODBC delete times range from 938ms to 1188ms, showing higher execution times and fluctuations.<br>
+        CUBRID processes deletions more efficiently.
+    </p>
+
+    <h3>Overall Summary</h3>
+    <ul>
+        <li>CUBRID significantly outperforms ODBC in all four operations: Insert, Select, Update, Delete.</li>
+        <li>CUBRID has lower execution times and more consistent performance, making it a better choice for databases requiring frequent writes and updates.</li>
+        <li>ODBC demonstrates higher latency and more variability, particularly in Insert, Update, and Delete operations.</li>
+        <li>For read operations (Select), CUBRID remains the faster option with lower and more stable execution times.</li>
+    </ul>
+
+    <p>In conclusion CUBRID is the preferred choice over ODBC</p>
+
+
+
+</div>
+
+<!-- Chart.js Script -->
+<script>
+
+    let data = {"cubrid":{"auto":{"insert":22573,"select":80,"update":23230,"delete":26330}},"odbc":{"auto":{"insert":37762,"select":453,"update":38865,"delete":38186}}}
+
+    const ctx = document.getElementById('auto').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Insert', 'Select', 'Update', 'Delete'],
+            datasets: [{
+                label: 'Cubrid',
+                data: Object.values(data.cubrid.auto),
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2
+            }, {
+                label: 'ODBC',
+                data: Object.values(data.odbc.auto),
+                backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Performance (ms)'
+                    }
+                }
+            }
+        }
+    });
+
+
+    // Configuration options
+
+    let result = {
+        cubrid: {
+            insert: [
+                854, 785, 774, 896, 842,
+                829, 881, 817, 829, 864,
+                825, 795, 907, 828, 820,
+                852, 822, 832, 838, 850
+            ],
+            select: [
+                4, 2, 2, 4, 2, 3, 2,
+                3, 4, 2, 2, 2, 2, 2,
+                2, 2, 2, 2, 2, 1
+            ],
+            update: [
+                744, 721, 853, 816, 789,
+                778, 816, 800, 763, 837,
+                796, 802, 817, 784, 800,
+                748, 791, 774, 802, 858
+            ],
+            delete: [
+                718, 734, 836, 843, 800,
+                800, 771, 758, 780, 787,
+                800, 774, 786, 756, 813,
+                798, 765, 830, 759, 801
+            ]
+        },
+        odbc: {
+            insert: [
+                1046, 1044, 1041, 1260,
+                1193, 1195, 1235, 1148,
+                1201, 1271, 1200, 1117,
+                1246, 1190, 1118, 1347,
+                1180, 1169, 1202, 1160
+            ],
+            select: [
+                9,  6, 7, 10, 7, 9, 10,
+                9, 10, 7,  7, 7, 8,  8,
+                8,  7, 8,  7, 7, 7
+            ],
+            update: [
+                1004,  923, 1129, 1142,
+                1119, 1092, 1187, 1105,
+                1069, 1135, 1124, 1158,
+                1177, 1084, 1133, 1062,
+                1064, 1060, 1125, 1227
+            ],
+            delete: [
+                938,  979, 1143, 1175,
+                1112, 1261, 1159, 1091,
+                1107, 1127, 1136, 1146,
+                1092, 1139, 1156, 1109,
+                1073, 1188, 1084, 1137
+            ]
+        }
+    }
+
+
+
+    const generateSequence = (start, end, step = 1) =>
+        Array.from({length: Math.ceil((end - start + 1) / step)}, (_, i) => start + i * step);
+    labels = generateSequence(1, result["cubrid"]["insert"].length);
+    let keys = ["insert", "select", "update", "delete"]
+        keys.forEach(element => {
+        const data = {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Cubrid',
+                    data: result["cubrid"][element],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    fill: false,
+                },
+                {
+                    label: 'ODBC',
+                    data: result["odbc"][element],
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    fill: false,
+                }
+            ]
+        };
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: `Comparison ${element}`,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Duration (ms)'
+                        }
+                    }
+                }
+            },
+        };
+
+        const myChart = new Chart(document.getElementById(element).getContext('2d'), config);
+    })
+
+
+</script>
+
+</body>
+</html>

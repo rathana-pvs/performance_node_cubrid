@@ -1,0 +1,23 @@
+{
+  "name": "node_cubrid",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "mocha test/**/*.js",
+    "sampling": "node stress_sampling/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "node-cubrid": "^11.0.0",
+    "odbc": "^2.4.9"
+  },
+  "devDependencies": {
+    "chai": "^5.1.2",
+    "mocha": "^11.1.0",
+    "node-odbc": "^0.2.10"
+  }
+}

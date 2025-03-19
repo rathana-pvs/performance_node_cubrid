@@ -1,0 +1,18 @@
+{
+  "cubrid": {
+    "manual": {
+      "insert": 2464,
+      "select": 7,
+      "update": 2516,
+      "delete": 2274
+    }
+  },
+  "odbc": {
+    "manual": {
+      "insert": 3460,
+      "select": 41,
+      "update": 3390,
+      "delete": 3359
+    }
+  }
+}
